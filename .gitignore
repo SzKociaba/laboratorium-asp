@@ -1,0 +1,111 @@
+# ============================================
+#  .NET / ASP.NET Core – build output
+# ============================================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]64/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+publish/
+*.pubxml
+*.publishproj
+PublishScripts/
+
+# ============================================
+#  NuGet
+# ============================================
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+.nuget/
+
+# ============================================
+#  VSCode
+#  (wspólne ustawienia zostają w repo)
+# ============================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# ============================================
+#  Visual Studio / Rider (na wypadek pracy
+#  w innym IDE, np. na uczelni)
+# ============================================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+.idea/
+*.sln.iml
+
+# ============================================
+#  Testy i coverage
+# ============================================
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+coverage/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+TestResults/
+
+# ============================================
+#  Sekrety i konfiguracja lokalna
+# ============================================
+appsettings.*.local.json
+appsettings.Local.json
+*.env
+.env
+.env.*
+!.env.example
+secrets.json
+
+# ============================================
+#  Bazy danych (SQLite / LocalDB)
+# ============================================
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+
+# ============================================
+#  Frontend (jeśli projekt używa npm)
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ============================================
+#  Pliki tymczasowe i systemowe
+# ============================================
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
