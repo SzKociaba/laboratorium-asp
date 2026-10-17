@@ -1,10 +1,12 @@
 // Brakowało określonych bibliotek
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using BookStore.Web.Models;
 
 public class BookController : Controller
 {
+    public IActionResult Index() => View(BookStoreMemory.Books);
+
     // GET /Book/Hello  → zwykły tekst
     public IActionResult Hello() => Content("Witaj w BookStore!", "text/plain; charset=utf-8");
 
@@ -45,5 +47,33 @@ public class BookController : Controller
 
     public IActionResult UserAgent() => Content(Request.Headers.UserAgent.ToString());
 
-    public IActionResult Json() => Json(new { status = "ok", time = DateTime.Now });
+    public IActionResult JsonDemo() => Json(new { status = "ok", time = DateTime.Now });
+    
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View(new BookFormViewModel());
+    }
+
+    [HttpPost]
+    public IActionResult Create(BookFormViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        BookStoreMemory.Books.Add(
+            new Book
+            {
+                Id = BookStoreMemory.Books.Max(b => b.Id) + 1,
+                Title = model.Title,
+                Isbn = model.Isbn,
+                PublicationDate = model.PublicationDate,
+                NumPages = model.NumPages,
+                Price = model.Price,
+                Author = model.Author
+            }
+        );
+
+        TempData["Success"] = $"Dodano książkę „{model.Title}”.";   // przetrwa jedno przekierowanie
+        return RedirectToAction(nameof(Index));                   // PRG: F5 nie wyśle formularza drugi raz
+    }
 }
