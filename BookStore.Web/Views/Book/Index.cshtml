@@ -1,0 +1,44 @@
+@model List<Book>
+@{
+    ViewData["Title"] = "Książki";
+}
+
+@section Styles {
+    <style>
+        .books-table thead th { background-color: #e9f2ff; }
+    </style>
+}
+
+<h2>Książki</h2>
+<a asp-action="Create" class="btn btn-primary mb-3">+ Dodaj książkę</a>
+<table class="table books-table">
+    <thead>
+        <tr>
+            <th>Tytuł</th>
+            <th>Autor</th>
+            <th>Rok</th>
+            <th>Cena</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            // Klamra wyrazenia Razer do definiowania kodu
+            // Ciało kodu naley umieszczać wewnątrz tej klamry
+            foreach (var book in Model)
+            {
+                <partial name="_BookRow" model="book" />
+                // widok częsciowy
+            }
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        console.log("Skrypt widoku Book/Index uruchomiony");
+    </script>
+}
+
+@section Footer {
+    <span> - Liczba książek w sklepie: @Model.Count</span>
+}
