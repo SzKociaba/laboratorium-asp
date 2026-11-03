@@ -9,6 +9,7 @@ public class BookFormViewModel
     public string Title { get; set; } = "";
 
     [Required, Isbn]                          // własny atrybut – część E
+    [Display(Name = "ISBN")]
     public string Isbn { get; set; } = "";
 
     [DataType(DataType.Date)]
@@ -21,6 +22,7 @@ public class BookFormViewModel
     public int NumPages { get; set; } = 100;
 
     [Range(0.01, 10000, ErrorMessage = "Cena musi być dodatnia")]
+    [Display(Name = "Cena")]
     public decimal Price { get; set; }
 
     [Required, Display(Name = "Autor")]
