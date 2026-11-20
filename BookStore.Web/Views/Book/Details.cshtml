@@ -1,1 +1,6 @@
-<h2>Szczegóły książki nr @ViewBag.Id</h2>
+@model Book
+<h2>@Model.Title</h2>
+<p>Autor: @Model.Author</p>
+<p>ISBN: @Model.Isbn</p>
+<p>Rok wydania: @Model.PublicationDate?.Year</p>
+<p>Cena: @Model.Price.ToString("C")</p>
