@@ -1,0 +1,13 @@
+@model List<(string Address, string Action, string Method)>
+<h2>Adresy aplikacji</h2>
+<table class="table">
+    <thead>
+        <tr><th>Adres</th><th>Kontroler.Akcja</th><th>Metoda HTTP</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr><td>@r.Address</td><td>@r.Action</td><td>@r.Method</td></tr>
+        }
+    </tbody>
+</table>

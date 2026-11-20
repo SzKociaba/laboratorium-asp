@@ -2,10 +2,33 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using BookStore.Web.Models;
+using BookStore.Web.Filters;
 
+[ServiceFilter(typeof(LogActionFilter))]   // Lab 3 E
+[MeasureTime]                              // Lab 3 zadanie 3
 public class BookController : Controller
 {
     public IActionResult Index() => View(BookStoreMemory.Books);
+
+    // Lab 3 A: /books/year/1997
+    public async Task<IActionResult> ByYear(int year)
+    {
+        await Task.CompletedTask; // dane w pamięci – w Lab 5 zapytanie do bazy
+        return View(nameof(Index), BookStoreMemory.Books.Where(b => b.PublicationDate?.Year == year).ToList());
+    }
+
+    // Lab 3 A: /books/isbn/9788308065341 (ISBN-y w pamięci mają myślniki, więc porównujemy same cyfry)
+    public async Task<IActionResult> ByIsbn(string isbn)
+    {
+        await Task.CompletedTask;
+        var book = BookStoreMemory.Books.FirstOrDefault(b => b.Isbn.Replace("-", "") == isbn);
+        if (book is null) return NotFound();
+        return RedirectToAction(nameof(Details), new { id = book.Id });
+    }
+
+    // Lab 3 zadanie 1: /archive/1965/3 – miesiąc nie jest uwzględniany
+    public IActionResult Archive(int year, int month) =>
+        View(nameof(Index), BookStoreMemory.Books.Where(b => b.PublicationDate?.Year == year).ToList());
 
     // GET /Book/Hello  → zwykły tekst
     public IActionResult Hello() => Content("Witaj w BookStore!", "text/plain; charset=utf-8");
@@ -14,11 +37,23 @@ public class BookController : Controller
     public IActionResult Status(int code = 200) => StatusCode(code);
 
     // GET /Book/Details/3 → widok
-    public IActionResult Details(int id)
+    // Lab 3 B: routing atrybutowy
+    [HttpGet("Book/Details/{id:int}")]
+    public async Task<IActionResult> Details(int id)
     {
-        ViewBag.Id = id;
-        return View();
+        await Task.CompletedTask;
+        var book = BookStoreMemory.Books.FirstOrDefault(b => b.Id == id);
+        if (book is null) return NotFound();
+        return View(book);
     }
+
+    // Lab 3 F: /Book/Boom → strona 500 z filtra wyjątku
+    public IActionResult Boom() => throw new InvalidOperationException("Celowy wyjątek");
+
+    // Lab 3 zadanie 4: dwa filtry akcji nad tą samą akcją
+    [TraceFilter("Pierwszy")]
+    [TraceFilter("Drugi")]
+    public IActionResult FilterOrder() => Content("Kolejność filtrów – zobacz logi serwera.");
 
     // (1) query string:  /Book/Echo?name=Ala&count=3
     public IActionResult Echo([FromQuery] string name = "nieznajomy", [FromQuery] int count = 1) =>

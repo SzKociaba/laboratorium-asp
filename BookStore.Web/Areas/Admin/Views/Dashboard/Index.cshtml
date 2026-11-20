@@ -1,0 +1,22 @@
+@model List<KeyValuePair<string, long>>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<h2>Dashboard</h2>
+<p>Liczba żądań: @ViewBag.Total</p>
+
+<h4>5 najpopularniejszych ścieżek</h4>
+<table class="table">
+    <thead>
+        <tr><th>Ścieżka</th><th>Żądania</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr><td>@p.Key</td><td>@p.Value</td></tr>
+        }
+    </tbody>
+</table>
+
+<a asp-area="Admin" asp-controller="Authors" asp-action="Index">Autorzy</a> |
+<a asp-area="" asp-controller="Book" asp-action="Index">Lista książek</a>
