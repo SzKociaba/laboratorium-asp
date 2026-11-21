@@ -6,29 +6,30 @@ using BookStore.Web.Filters;
 
 [ServiceFilter(typeof(LogActionFilter))]   // Lab 3 E
 [MeasureTime]                              // Lab 3 zadanie 3
-public class BookController : Controller
+public class BookController(IBookService service) : Controller
 {
-    public IActionResult Index() => View(BookStoreMemory.Books);
+    // Lab 4: dane z bazy przez IBookService (widok oczekuje List<Book>)
+    public IActionResult Index() => View(service.FindAll().ToList());
 
     // Lab 3 A: /books/year/1997
     public async Task<IActionResult> ByYear(int year)
     {
-        await Task.CompletedTask; // dane w pamięci – w Lab 5 zapytanie do bazy
-        return View(nameof(Index), BookStoreMemory.Books.Where(b => b.PublicationDate?.Year == year).ToList());
+        await Task.CompletedTask; // IBookService jest synchroniczny
+        return View(nameof(Index), service.FindAll().Where(b => b.PublicationDate?.Year == year).ToList());
     }
 
-    // Lab 3 A: /books/isbn/9788308065341 (ISBN-y w pamięci mają myślniki, więc porównujemy same cyfry)
+    // Lab 3 A: /books/isbn/9788308065341 (zapisane ISBN-y mają myślniki, więc porównujemy same cyfry)
     public async Task<IActionResult> ByIsbn(string isbn)
     {
         await Task.CompletedTask;
-        var book = BookStoreMemory.Books.FirstOrDefault(b => b.Isbn.Replace("-", "") == isbn);
+        var book = service.FindAll().FirstOrDefault(b => b.Isbn.Replace("-", "") == isbn);
         if (book is null) return NotFound();
         return RedirectToAction(nameof(Details), new { id = book.Id });
     }
 
     // Lab 3 zadanie 1: /archive/1965/3 – miesiąc nie jest uwzględniany
     public IActionResult Archive(int year, int month) =>
-        View(nameof(Index), BookStoreMemory.Books.Where(b => b.PublicationDate?.Year == year).ToList());
+        View(nameof(Index), service.FindAll().Where(b => b.PublicationDate?.Year == year).ToList());
 
     // GET /Book/Hello  → zwykły tekst
     public IActionResult Hello() => Content("Witaj w BookStore!", "text/plain; charset=utf-8");
@@ -42,7 +43,7 @@ public class BookController : Controller
     public async Task<IActionResult> Details(int id)
     {
         await Task.CompletedTask;
-        var book = BookStoreMemory.Books.FirstOrDefault(b => b.Id == id);
+        var book = service.FineById(id);
         if (book is null) return NotFound();
         return View(book);
     }
@@ -83,7 +84,7 @@ public class BookController : Controller
     public IActionResult UserAgent() => Content(Request.Headers.UserAgent.ToString());
 
     public IActionResult JsonDemo() => Json(new { status = "ok", time = DateTime.Now });
-    
+
     [HttpGet]
     public IActionResult Create()
     {
@@ -95,10 +96,9 @@ public class BookController : Controller
     {
         if (!ModelState.IsValid) return View(model);
 
-        BookStoreMemory.Books.Add(
+        service.Add(
             new Book
             {
-                Id = BookStoreMemory.Books.Max(b => b.Id) + 1,
                 Title = model.Title,
                 Isbn = model.Isbn,
                 PublicationDate = model.PublicationDate,
