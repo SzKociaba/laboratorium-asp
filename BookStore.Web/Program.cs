@@ -1,5 +1,8 @@
 using BookStore.Web.Filters;
 using BookStore.Web.Middleware;
+using BookStore.Web.Models;
+using BookStore.Web.Models.Ef;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Web;
 
@@ -8,6 +11,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var connection = builder.Configuration["ConnectionStrings:Default"];
 
         // Add services to the container.
         // Lab 3 E: filtr wyjątku zarejestrowany globalnie (dla wszystkich kontrolerów)
@@ -17,6 +21,9 @@ public class Program
         builder.Services.AddSingleton<RequestStats>();
         // Lab 3 E: filtr akcji pobierany z DI przez [ServiceFilter(typeof(LogActionFilter))]
         builder.Services.AddScoped<LogActionFilter>();
+        // Lab 4: Dodajemy DbContext
+        builder.Services.AddDbContext<BookDbContext>(options => options.UseSqlite(connection));
+        builder.Services.AddScoped<IBookService, EfBookService>();
 
         var app = builder.Build();
 
